@@ -37,7 +37,7 @@ class MazeEnvironment {
     var policy: MazePolicy = RandomMazePolicy
     val mazeBound: Shapes = defaultBound
 //    var obstacles: Shapes = defaultObstacle
-    var obstacles: Shapes = obstaclesCollection.o2
+    var obstacles: Shapes = obstaclesCollection.o1
     var goalRegions: Shapes = defaultGoal
     var stepSize = 0.02
     val rewardOfCollision = 0.0

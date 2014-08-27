@@ -4,7 +4,7 @@ package com.hccl.nlip
  * Created by Superfan on 2014/8/26.
  */
 
-import java.awt.Shape
+import java.awt.{BasicStroke, Color, Paint, Shape}
 import java.awt.geom.Rectangle2D
 import org.jfree.chart.annotations.{XYPolygonAnnotation, XYShapeAnnotation}
 import org.jfree.chart.plot.XYPlot
@@ -106,10 +106,14 @@ class LineSegment(val p1: Point2D, val p2: Point2D) {
 }
 
 object Polygon {
-    def apply(vertices: Seq[Point2D]) = new Polygon(vertices)
+    def apply(vertices: Seq[Point2D],
+              outlinePaint: Paint = Color.black,
+              fillPaint: Paint = null) = new Polygon(vertices, outlinePaint, fillPaint)
 }
 
-class Polygon(val vertices: Seq[Point2D]) extends Shapes {
+class Polygon(val vertices: Seq[Point2D],
+              outlinePaint: Paint,
+              fillPaint: Paint) extends Shapes {
     val nSides = vertices.length
     val verticesFlatArray = vertices.flatMap(p => Seq(p.X, p.Y)).toArray
     var anno: XYPolygonAnnotation = null
@@ -137,7 +141,8 @@ class Polygon(val vertices: Seq[Point2D]) extends Shapes {
     }
 
     override def updatePlot = {
-        anno = new XYPolygonAnnotation(verticesFlatArray)
+        anno = new XYPolygonAnnotation(verticesFlatArray,
+            new BasicStroke(1.0f), outlinePaint, fillPaint)
         plot.addAnnotation(anno)
     }
 
@@ -145,21 +150,30 @@ class Polygon(val vertices: Seq[Point2D]) extends Shapes {
 }
 
 object Rectangular {
-    def apply(pa: Point2D, pb: Point2D): Rectangular = {
+    def apply(pa: Point2D,
+              pb: Point2D,
+              outlinePaint: Paint = Color.black,
+              fillPaint: Paint = null): Rectangular = {
         val (p1, p2) =
             if (pa.X < pb.X)
                 (pa, pb)
             else
                 (pb, pa)
         if (p1.Y < p2.Y)
-            new Rectangular(Point2D(p1.X, p2.Y), p2, Point2D(p2.X, p1.Y), p1)
+            new Rectangular(Point2D(p1.X, p2.Y), p2, Point2D(p2.X, p1.Y), p1,
+                outlinePaint, fillPaint)
         else
-            new Rectangular(p1, Point2D(p2.X, p1.Y), p2, Point2D(p1.X, p2.Y))
+            new Rectangular(p1, Point2D(p2.X, p1.Y), p2, Point2D(p1.X, p2.Y),
+                outlinePaint, fillPaint)
     }
 }
 
-class Rectangular(val p1: Point2D, val p2: Point2D,
-          val p3: Point2D, val p4: Point2D) extends Polygon(Seq(p1, p2, p3, p4)) {
+class Rectangular(val p1: Point2D,
+                  val p2: Point2D,
+                  val p3: Point2D,
+                  val p4: Point2D,
+                  outlinePaint: Paint,
+                  fillPaint: Paint) extends Polygon(Seq(p1, p2, p3, p4), outlinePaint, fillPaint) {
     val height = p1.Y - p3.Y
     val width = p3.X - p1.X
 
@@ -188,13 +202,15 @@ class Rectangular(val p1: Point2D, val p2: Point2D,
 
 object GeoSettings {
     val defaultBound = Rectangular(Point2D(0.0, 0.0), Point2D(1.0, 1.0))
-    val defaultGoal = Rectangular(Point2D(0.0, 0.0), Point2D(1.0, 0.2))
-    val defaultObstacle = Rectangular(Point2D(0.2, 0.4), Point2D(0.8, 0.6))
+    val defaultGoal = Rectangular(Point2D(0.0, 0.0), Point2D(1.0, 0.2),
+        outlinePaint = Color.blue, fillPaint = Color.green)
+    val defaultObstacle = Rectangular(Point2D(0.2, 0.4), Point2D(0.8, 0.6),
+        fillPaint = Color.black)
 
     object obstaclesCollection {
-        val o1 = Rectangular(Point2D(0.0, 0.6), Point2D(0.4, 0.4)) +
-         Rectangular(Point2D(0.6, 0.6), Point2D(1.0, 0.4))
-        val o2 = Rectangular(Point2D(0.0, 1.0), Point2D(0.4, 0.3)) +
-         Rectangular(Point2D(0.6, 1.0), Point2D(1.0, 0.3))
+        val o1 = Rectangular(Point2D(0.0, 0.6), Point2D(0.4, 0.4), fillPaint = Color.black) +
+         Rectangular(Point2D(0.6, 0.6), Point2D(1.0, 0.4), fillPaint = Color.black)
+        val o2 = Rectangular(Point2D(0.0, 1.0), Point2D(0.4, 0.3), fillPaint = Color.black) +
+         Rectangular(Point2D(0.6, 1.0), Point2D(1.0, 0.3), fillPaint = Color.black)
     }
 }
