@@ -15,6 +15,8 @@ libraryDependencies  ++= Seq(
     "org.scalanlp" %% "breeze" % "0.9",
     "org.scalanlp" %% "breeze-natives" % "0.9",
     "org.jfree" % "jfreechart" % "1.0.19",
+    "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
+    "ch.qos.logback" % "logback-classic" % "1.1.2",
     "org.scalatest" %% "scalatest" % "2.2.1" % "test"
 )
 

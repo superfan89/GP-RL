@@ -9,14 +9,19 @@ import java.awt.Color
 import java.awt.event.{ActionEvent, ActionListener}
 import java.awt.geom.Ellipse2D
 import javax.swing.Timer
+import com.typesafe.scalalogging.LazyLogging
 import org.jfree.chart.axis.NumberAxis
 import org.jfree.chart.plot.{XYPlot, PlotOrientation}
-import org.jfree.chart.renderer.xy.{XYDotRenderer, XYBubbleRenderer}
+import org.jfree.chart.renderer.xy.{VectorRenderer, XYDotRenderer, XYBubbleRenderer}
 import org.jfree.chart.{ChartFactory, JFreeChart}
 import org.jfree.data.xy.{DefaultXYDataset, XYDataset}
 import org.jfree.util.ShapeUtilities
 
 case class MazeState(location: Point2D)
+
+object MazeAction {
+    def randomAction = MazeAction(random * 2 * PI)
+}
 
 case class MazeAction(radiansToMove: Double)
 
@@ -28,21 +33,31 @@ object RandomMazePolicy extends MazePolicy {
     def getAction(s: MazeState) = MazeAction(PI * 2 * math.random)
 }
 
-class MazeEnvironment {
+object MazeEnvironment {
+    val rewardOfCollision = 0.0
+    val rewardOfStepOutsideGoalRegion = -1.0
+    val rewardOfReachingGoal = 10
+    var stepSize = 0.1
+    val xLower = 0.0
+    val xUpper = 1.0
+    val yLower = 0.0
+    val yUpper = 1.0
+}
+
+class MazeEnvironment extends LazyLogging {
     import GeoSettings._
+    import MazeEnvironment._
 
     var location: Point2D = null
     var totalSteps: Int = 0
     var totalReward: Double = 0.0
-    var policy: MazePolicy = RandomMazePolicy
+    var policy: MazePolicy = null
     val mazeBound: Shapes = defaultBound
 //    var obstacles: Shapes = defaultObstacle
     var obstacles: Shapes = obstaclesCollection.o1
     var goalRegions: Shapes = defaultGoal
-    var stepSize = 0.02
-    val rewardOfCollision = 0.0
-    val rewardOfStepOutsideGoalRegion = -1.0
-    val rewardOfReachingGoal = 10
+    var controller: Controller = null
+    var actionToPerform = MazeAction(random * PI * 2)
 
     def getValidRandomInitialLocation = {
         var initialLoc = Point2D(math.random, math.random)
@@ -60,30 +75,44 @@ class MazeEnvironment {
     def doReset(): Unit = {
         location = getValidRandomInitialLocation
         totalSteps = 0
+        controller = new GPSarsaController(MazeState(location), actionToPerform)
+        policy = controller.getPolicy
     }
 
     def doStep(): Double = {
-        val action = policy.getAction(getCurrentState)
-        val p2 = location.getPointFromThis(action.radiansToMove, stepSize)
+        val oldState = getCurrentState
+        val oldAction = actionToPerform
+        val p2 = location.getPointFromThis(actionToPerform.radiansToMove, stepSize)
         val l = LineSegment(location, p2)
         var reward = 0.0
+        logger.debug(s"Candidate action: ${actionToPerform.radiansToMove} point: $p2")
         //Collision
         if (mazeBound.intersectsWithLineSeg(l) || obstacles.intersectsWithLineSeg(l)) {
             reward += rewardOfCollision + rewardOfStepOutsideGoalRegion
+            logger.debug("Collision")
         }
-        //A step outside the goal regions
+        //Reach the goal get the reward and
+        //got flung elsewhere starting to explore again
         else if (goalRegions.contains(p2)) {
             reward += rewardOfReachingGoal
             location = getValidRandomInitialLocation
+            logger.debug("Reach goal")
         }
-        //Reach the goal get the reward and 
-        //got flung elsewhere starting to explore again
+        //A step outside the goal regions
         else {
             reward += rewardOfStepOutsideGoalRegion
             location = p2
+            logger.debug("Haven't reached goal region")
         }
         totalReward += reward
         totalSteps += 1
+        actionToPerform = policy.getAction(getCurrentState)
+        val newState = getCurrentState
+        controller.observeStep(oldState, oldAction,
+            reward, newState, actionToPerform)
+        logger.debug(s"Current reward $reward, " +
+         s"total reward $totalReward, " +
+         s"location ${location}")
         reward
     }
 
@@ -122,18 +151,19 @@ class MazeEnvironment {
         chart.setBackgroundPaint(Color.white)
         // get a reference to the plot for further customisation...
         plot = chart.getXYPlot
-
-
-
         plot.setBackgroundPaint(Color.white)
-        plot.getDomainAxis.setRange(0.0, 1.0)
-        plot.getRangeAxis.setRange(0.0, 1.0)
+        plot.getDomainAxis.setRange(xLower, xUpper)
+        plot.getRangeAxis.setRange(yLower, yUpper)
 //        plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0))
         plot.setDomainGridlinePaint(Color.lightGray)
         plot.setRangeGridlinePaint(Color.lightGray)
         val renderer = plot.getRenderer
         renderer.setSeriesShape(0, new Ellipse2D.Double(-6, -6, 12, 12))
         renderer.setSeriesPaint(0, Color.red)
+        val localVectorRenderer = new VectorRenderer()
+        localVectorRenderer.setSeriesPaint(0, Color.blue)
+//        localVectorRenderer.setBaseToolTipGenerator(new VectorToolTipGenerator())
+        plot.setRenderer(1, localVectorRenderer)
         // change the auto tick unit selection to integer units only...
         val rangeAxis = plot.getRangeAxis
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits())
@@ -143,7 +173,6 @@ class MazeEnvironment {
         mazeBound.registerXYPlot(plot)
         //Start the animation
         new DataGenerator(1).start()
-
         chart
     }
 
@@ -152,7 +181,8 @@ class MazeEnvironment {
 
         def actionPerformed(event: ActionEvent): Unit = {
             doStep()
-            plot.setDataset(genDataset)
+            plot.setDataset(0, genDataset)
+            plot.setDataset(1, controller.getActionVectorSeries(0.02))
         }
     }
 }
