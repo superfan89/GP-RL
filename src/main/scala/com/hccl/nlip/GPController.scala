@@ -25,8 +25,9 @@ extends Controller with LazyLogging
     //Meta-parameters
     var nu: Double = 0.1
     var sigma: Double = 1
-    val gamma = 0.9
+    def gamma = if(episodeEnd) 0.9 else 0.9
     var succssfulEpisods: Int = 0
+    var episodeEnd = false
     def epsilon = 100.0 / (100.0 + succssfulEpisods)
 
     //Kernel parameters
@@ -132,8 +133,13 @@ extends Controller with LazyLogging
                     reward: Double,
                     newState: MazeState,
                     newAction: MazeAction): Unit = {
-        if (reward == MazeEnvironment.rewardOfReachingGoal)
+        if (reward == MazeEnvironment.rewardOfReachingGoal) {
             succssfulEpisods += 1
+            episodeEnd = true
+        }
+        else {
+            episodeEnd = false
+        }
 
         val k_tilde = getKVector(newState, newAction)
         val a_prev = a
