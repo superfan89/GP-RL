@@ -80,7 +80,7 @@ extends Controller with LazyLogging
         for (((_, action), i) <- dict.zipWithIndex)
             u :+= DenseVector(cos(action.radiansToMove),
                 sin(action.radiansToMove)) * beta(i)
-        val a = atan2(u(0), u(1))
+        val a = atan2(u(1), u(0))
         if (a < 0)
             a + 2 * PI
         else
