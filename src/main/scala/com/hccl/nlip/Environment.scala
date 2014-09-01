@@ -85,7 +85,9 @@ class MazeEnvironment extends LazyLogging {
     def doStep(): Double = {
         val oldState = getCurrentState
         val oldAction = actionToPerform
-        val p2 = location.getPointFromThis(actionToPerform.radiansToMove, stepSize)
+        // Add random perturbation to the true action
+        val trueAction = MazeAction(actionToPerform.radiansToMove + PI / 6 * (random - 0.5))
+        val p2 = location.getPointFromThis(trueAction.radiansToMove, stepSize)
         val l = LineSegment(location, p2)
         var reward = 0.0
 //        logger.debug(s"Candidate action: ${actionToPerform.radiansToMove} point: $p2")
