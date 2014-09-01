@@ -197,20 +197,28 @@ class Rectangular(val p1: Point2D,
 //    override def updatePlot = {
 //        anno = new XYPolygonAnnotation(verticesFlatArray)
 //        plot.addAnnotation(anno)
-//    }
-//}
+    //    }
+    //}
 
-object GeoSettings {
-    val defaultBound = Rectangular(Point2D(0.0, 0.0), Point2D(1.0, 1.0))
-    val defaultGoal = Rectangular(Point2D(0.0, 0.0), Point2D(1.0, 0.2),
-        outlinePaint = Color.blue, fillPaint = Color.green)
+    object GeoSettings {
+        val defaultBound = Rectangular(Point2D(0.0, 0.0), Point2D(1.0, 1.0))
+        val defaultGoal = Rectangular(Point2D(0.0, 0.0), Point2D(1.0, 0.2),
+            outlinePaint = Color.blue, fillPaint = Color.green)
     val defaultObstacle = Rectangular(Point2D(0.2, 0.4), Point2D(0.8, 0.6),
         fillPaint = Color.black)
+
+    object goalCollection {
+        val g1 = Rectangular(Point2D(0.0, 0.0), Point2D(0.1, 0.1), outlinePaint = Color.blue, fillPaint = Color.green)
+    }
 
     object obstaclesCollection {
         val o1 = Rectangular(Point2D(0.0, 0.6), Point2D(0.4, 0.4), fillPaint = Color.black) +
          Rectangular(Point2D(0.6, 0.6), Point2D(1.0, 0.4), fillPaint = Color.black)
         val o2 = Rectangular(Point2D(0.0, 1.0), Point2D(0.4, 0.3), fillPaint = Color.black) +
          Rectangular(Point2D(0.6, 1.0), Point2D(1.0, 0.3), fillPaint = Color.black)
+        val o3 = Rectangular(Point2D(0.0, 0.6), Point2D(0.1, 0.4), fillPaint = Color.black)
+        val o4 = Rectangular(Point2D(0.0, 0.0), Point2D(-0.1, 0.4), fillPaint = Color.black)
+        val o5 = Rectangular(Point2D(0.1, 0.4), Point2D(0.5, 0.5), fillPaint = Color.black) +
+         Rectangular(Point2D(0.4, 0.0), Point2D(0.5, 0.5), fillPaint = Color.black)
     }
 }
