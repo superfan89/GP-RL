@@ -10,16 +10,24 @@ import scala.collection.mutable.ArrayBuffer
 import breeze.linalg._
 import Math._
 
-class GPSarsaController(initialState: MazeState,
+/**
+ * GPSARSA algorithm as shown in Algo.20 of
+ * ''Algorithms and Representations for Reinforcement Learning'' by Yaakove Engel,
+ * using sparse kernel approximation to accelerate computation
+ * @param initialState
+ * @param initialAction
+ */
+
+class GPSARSASparseController(initialState: MazeState,
                         initialAction: MazeAction)
 extends Controller with LazyLogging
 {
     //Meta-parameters
     var nu: Double = 0.1
-    var sigma: Double = 0.2
-    val gamma = 0.5
+    var sigma: Double = 1
+    val gamma = 0.9
     var succssfulEpisods: Int = 0
-    def epsilon = 10.0 / (10.0 + succssfulEpisods)
+    def epsilon = 100.0 / (100.0 + succssfulEpisods)
 
     //Kernel parameters
     val sigma_state = 0.2
@@ -67,7 +75,8 @@ extends Controller with LazyLogging
             k(i) = fullKernel(dict(i)._1, s, dict(i)._2, a)
         k
     }
-    
+
+    // This is currently coupled with the definition of the action kernel
     def getBestAngleToMove(s: MazeState): Double = {
         val k_state = {
             val k = DenseVector.zeros[Double](dict.length)
@@ -91,7 +100,6 @@ extends Controller with LazyLogging
         new MazePolicy {
             override def getAction(s: MazeState): MazeAction = {
                 if (dict.length == 1 || random < epsilon)
-//                if (dict.length == 1)
                     MazeAction.randomAction
                 else
                     MazeAction(getBestAngleToMove(s))
@@ -190,11 +198,86 @@ extends Controller with LazyLogging
              delta_k_tilde.dot(c_tilde + c_tilde_prev * lambda) -
              lambda * gamma * sigma * sigma
         }
-        val test = alpha_tilde + c_tilde / s * d
-        if (test(0)!=test(0))
-            logger.debug(s"NaN detected")
         alpha_tilde = alpha_tilde + c_tilde / s * d
         C_tilde = C_tilde + c_tilde * c_tilde.t / s
-        logger.debug(s"Epsilon: $epsilon")
+//        logger.debug(s"Epsilon: $epsilon")
+    }
+}
+
+/**
+ * A direct and unoptimized version of the GPTD algorithms,
+ * this is typically to slow for any pratical use
+ * @param initialState
+ * @param initialAction
+ */
+
+class GPSARSAUnoptimizedSparseControler(initialState: MazeState,
+                            initialAction: MazeAction)
+extends GPSARSASparseController(initialState, initialAction) {
+    var r = DenseVector.zeros[Double](0)
+    var A = DenseMatrix((1.0))
+    var t = 0
+
+    def getH: DenseMatrix[Double]= {
+        val H = DenseMatrix.zeros[Double](t, t + 1)
+        for (i <- 0 until H.rows) {
+            H(i, i) = 1
+            H(i, i + 1) = -gamma
+        }
+        H
+    }
+
+    def getK: DenseMatrix[Double]= {
+        val K = DenseMatrix.zeros[Double](dict.length, dict.length)
+        for (i <- 0 until K.rows)
+            for (j <- 0 until K.cols) {
+                K(i, j) = fullKernel(dict(i)._1, dict(j)._1, dict(i)._2, dict(j)._2)
+            }
+        K
+    }
+
+    override def observeStep(oldState: MazeState,
+                    oldAction: MazeAction,
+                    reward: Double,
+                    newState: MazeState,
+                    newAction: MazeAction): Unit = {
+        if (reward == MazeEnvironment.rewardOfReachingGoal)
+            succssfulEpisods += 1
+        val k_tilde = getKVector(newState, newAction)
+        t += 1
+        a = K_tilde_inv * k_tilde
+        val delta = fullKernel(newState, newAction) - k_tilde.dot(a)
+        r= {
+            val new_r = DenseVector.zeros[Double](r.length + 1)
+            new_r(0 to -2) := r
+            new_r(-1) = reward
+            new_r
+        }
+        if (delta > nu) {
+            dict += ((newState, newAction))
+            A = {
+                val newA = DenseMatrix.zeros[Double](A.rows + 1, A.cols + 1)
+                newA(0 to -2, 0 to -2) := A
+                newA(-1, -1) = 1.0
+                newA
+            }
+            logger.debug(s"State/Action dictionary size: ${dict.length}")
+        }
+        else {
+            A = {
+                val newA = DenseMatrix.zeros[Double](A.rows + 1, A.cols)
+                newA(0 to -2, ::) := A
+                newA(-1, ::) := a.t
+                newA
+            }
+        }
+        val H = getH
+        val H_tilde = H * A
+        val K_tilde = getK
+        K_tilde_inv = inv(K_tilde)
+        val Sigma = H_tilde * H_tilde.t * sigma * sigma
+//        H.t * inv(H * K_tilde * H.t + Sigma) * r
+        alpha_tilde = H_tilde.t * inv(H_tilde * K_tilde * H_tilde.t + Sigma) * r
+//        logger.debug(s"Epsilon: $epsilon")
     }
 }

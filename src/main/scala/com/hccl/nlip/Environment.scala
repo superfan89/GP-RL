@@ -36,7 +36,7 @@ object RandomMazePolicy extends MazePolicy {
 object MazeEnvironment {
     val rewardOfCollision = 0.0
     val rewardOfStepOutsideGoalRegion = -1.0
-    val rewardOfReachingGoal = 10
+    val rewardOfReachingGoal = 10.0
     var stepSize = 0.1
     val xLower = 0.0
     val xUpper = 1.0
@@ -55,9 +55,10 @@ class MazeEnvironment extends LazyLogging {
     val mazeBound: Shapes = defaultBound
 //    var obstacles: Shapes = defaultObstacle
     var obstacles: Shapes = obstaclesCollection.o1
-    var goalRegions: Shapes = defaultGoal
+    var goalRegions: Shapes = goalCollection.g1
     var controller: Controller = null
     var actionToPerform = MazeAction(random * PI * 2)
+    var successfulEpisodes = 0
 
     def getValidRandomInitialLocation = {
         var initialLoc = Point2D(math.random, math.random)
@@ -75,8 +76,10 @@ class MazeEnvironment extends LazyLogging {
     def doReset(): Unit = {
         location = getValidRandomInitialLocation
         totalSteps = 0
-        controller = new GPSarsaController(MazeState(location), actionToPerform)
+        controller = new GPSARSASparseController(MazeState(location), actionToPerform)
+//        controller = new GPSARSAUnoptimizedSparseControler(MazeState(location), actionToPerform)
         policy = controller.getPolicy
+//        policy = RandomMazePolicy
     }
 
     def doStep(): Double = {
@@ -85,24 +88,26 @@ class MazeEnvironment extends LazyLogging {
         val p2 = location.getPointFromThis(actionToPerform.radiansToMove, stepSize)
         val l = LineSegment(location, p2)
         var reward = 0.0
-        logger.debug(s"Candidate action: ${actionToPerform.radiansToMove} point: $p2")
+//        logger.debug(s"Candidate action: ${actionToPerform.radiansToMove} point: $p2")
         //Collision
         if (mazeBound.intersectsWithLineSeg(l) || obstacles.intersectsWithLineSeg(l)) {
             reward += rewardOfCollision + rewardOfStepOutsideGoalRegion
-            logger.debug("Collision")
+//            logger.debug("Collision")
         }
         //Reach the goal get the reward and
         //got flung elsewhere starting to explore again
         else if (goalRegions.contains(p2)) {
             reward += rewardOfReachingGoal
             location = getValidRandomInitialLocation
-            logger.debug("Reach goal")
+//            logger.debug("Reach goal")
+            successfulEpisodes += 1
+            logger.debug(s"Successful episodes $successfulEpisodes")
         }
         //A step outside the goal regions
         else {
             reward += rewardOfStepOutsideGoalRegion
             location = p2
-            logger.debug("Haven't reached goal region")
+//            logger.debug("Haven't reached goal region")
         }
         totalReward += reward
         totalSteps += 1
@@ -110,9 +115,9 @@ class MazeEnvironment extends LazyLogging {
         val newState = getCurrentState
         controller.observeStep(oldState, oldAction,
             reward, newState, actionToPerform)
-        logger.debug(s"Current reward $reward, " +
-         s"total reward $totalReward, " +
-         s"location ${location}")
+//        logger.debug(s"Current reward $reward, " +
+//         s"total reward $totalReward, " +
+//         s"location ${location}")
         reward
     }
 
@@ -171,6 +176,10 @@ class MazeEnvironment extends LazyLogging {
         goalRegions.registerXYPlot(plot)
         obstacles.registerXYPlot(plot)
         mazeBound.registerXYPlot(plot)
+//        for (i <- 1 to 200)
+//            doStep()
+        while(successfulEpisodes < 400)
+            doStep()
         //Start the animation
         new DataGenerator(1).start()
         chart
