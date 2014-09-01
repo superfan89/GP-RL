@@ -5,10 +5,10 @@ package com.hccl.nlip
  */
 
 import java.awt.{BasicStroke, Color, Paint, Shape}
+import java.lang.Math._
 import java.awt.geom.Rectangle2D
 import org.jfree.chart.annotations.{XYPolygonAnnotation, XYShapeAnnotation}
 import org.jfree.chart.plot.XYPlot
-import math._
 
 trait Drawable {
     var plot: XYPlot = null
@@ -23,22 +23,22 @@ trait Shapes extends Drawable {
     def contains(p: Point2D): Boolean
     def intersectsWithLineSeg(ls: LineSegment): Boolean
     def +(that: Shapes) = {
-        val outer = this
+        val self = this
         new Shapes {
             override def contains(p: Point2D) =
-                outer.contains(p) || that.contains(p)
+                self.contains(p) || that.contains(p)
 
             override def intersectsWithLineSeg(ls: LineSegment) =
-                outer.intersectsWithLineSeg(ls) || that.intersectsWithLineSeg(ls)
+                self.intersectsWithLineSeg(ls) || that.intersectsWithLineSeg(ls)
 
             override def registerXYPlot(p: XYPlot): Unit = {
-                outer.plot = p
-                that.plot = p
+                self.registerXYPlot(p)
+                that.registerXYPlot(p)
                 updatePlot
             }
 
             override def updatePlot = {
-                outer.updatePlot
+                self.updatePlot
                 that.updatePlot
             }
         }
@@ -47,6 +47,8 @@ trait Shapes extends Drawable {
 
 object Point2D {
     def apply(X: Double, Y: Double) = new Point2D(X, Y)
+
+    def unit(angle: Double) = new Point2D(cos(angle), sin(angle))
 }
 
 class Point2D(val X: Double, val Y: Double) {
@@ -62,6 +64,8 @@ class Point2D(val X: Double, val Y: Double) {
     def +(that: Point2D) = Point2D(X + that.X, Y + that.Y)
 
     def -(that: Point2D) = Point2D(X - that.X, Y - that.Y)
+
+    def *(scalar: Double) = Point2D(X * scalar, Y * scalar)
 
     override def toString = s"($X, $Y)"
 }
@@ -186,6 +190,27 @@ class Rectangular(val p1: Point2D,
     override def toString = s"Rect: $p1 - $p3"
 }
 
+object ThickLine {
+    val thickness = 0.005
+    def apply(end1: Point2D, end2: Point2D) = {
+        val orientVec = end2 - end1
+        val orientAngle = atan2(orientVec.Y, orientVec.X)
+        val orthoAngle = orientAngle + PI / 4
+        val incremental = Point2D.unit(orthoAngle) * (thickness / 2)
+        val p1 = end1 + incremental
+        val p2 = end2 + incremental
+        val p3 = end2 - incremental
+        val p4 = end1 - incremental
+        new ThickLine(p1, p2, p3, p4)
+    }
+}
+
+class ThickLine(p1: Point2D,
+                p2: Point2D,
+                p3: Point2D,
+                p4: Point2D)
+ extends Rectangular(p1, p2, p3, p4, Color.black, Color.black)
+
 //class Agent(var X: Double, var Y: Double) extends Drawable {
 //    var anno: XYPolygonAnnotation = null
 //
@@ -220,5 +245,11 @@ class Rectangular(val p1: Point2D,
         val o4 = Rectangular(Point2D(0.0, 0.0), Point2D(-0.1, 0.4), fillPaint = Color.black)
         val o5 = Rectangular(Point2D(0.1, 0.4), Point2D(0.5, 0.5), fillPaint = Color.black) +
          Rectangular(Point2D(0.4, 0.0), Point2D(0.5, 0.5), fillPaint = Color.black)
+        //Obstacles comprised of ThickLines
+        val o6 = ThickLine(Point2D(0.0, 0.3), Point2D(0.17, 0.2)) +
+                 ThickLine(Point2D(0.17, 0.2), Point2D(0.22, 0.15)) +
+                 ThickLine(Point2D(0.2, 0.7), Point2D(0.5, 0.3)) +
+                 ThickLine(Point2D(0.5, 0.3), Point2D(0.65, 0.0)) +
+                 Rectangular(Point2D(0.5, 0.6), Point2D(0.7, 0.9))
     }
 }

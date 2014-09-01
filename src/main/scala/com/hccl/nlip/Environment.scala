@@ -54,7 +54,7 @@ class MazeEnvironment extends LazyLogging {
     var policy: MazePolicy = null
     val mazeBound: Shapes = defaultBound
 //    var obstacles: Shapes = defaultObstacle
-    var obstacles: Shapes = obstaclesCollection.o1
+    var obstacles: Shapes = obstaclesCollection.o6
     var goalRegions: Shapes = goalCollection.g1
     var controller: Controller = null
     var actionToPerform = MazeAction(random * PI * 2)
@@ -76,6 +76,7 @@ class MazeEnvironment extends LazyLogging {
     def doReset(): Unit = {
         location = getValidRandomInitialLocation
         totalSteps = 0
+        totalReward = 0.0
         controller = new GPSARSASparseController(MazeState(location), actionToPerform)
 //        controller = new GPSARSAUnoptimizedSparseControler(MazeState(location), actionToPerform)
         policy = controller.getPolicy
@@ -103,7 +104,8 @@ class MazeEnvironment extends LazyLogging {
             location = getValidRandomInitialLocation
 //            logger.debug("Reach goal")
             successfulEpisodes += 1
-            logger.debug(s"Successful episodes $successfulEpisodes")
+            logger.debug(s"Successful episodes $successfulEpisodes, " +
+             s"total reward $totalReward")
         }
         //A step outside the goal regions
         else {
