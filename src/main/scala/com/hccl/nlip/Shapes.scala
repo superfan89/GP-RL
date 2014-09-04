@@ -16,12 +16,20 @@ trait Drawable {
         plot = p
         updatePlot
     }
+
+    def unregisterXYPlot {}
+
     def updatePlot: Unit = {}
 }
 
 trait Shapes extends Drawable {
+    var name: String = null
     def contains(p: Point2D): Boolean
     def intersectsWithLineSeg(ls: LineSegment): Boolean
+    def setName(name: String): Shapes = {
+        this.name = name
+        this
+    }
     def +(that: Shapes) = {
         val self = this
         new Shapes {
@@ -35,6 +43,11 @@ trait Shapes extends Drawable {
                 self.registerXYPlot(p)
                 that.registerXYPlot(p)
                 updatePlot
+            }
+
+            override def unregisterXYPlot: Unit = {
+                self.unregisterXYPlot
+                that.unregisterXYPlot
             }
 
             override def updatePlot = {
@@ -144,10 +157,19 @@ class Polygon(val vertices: Seq[Point2D],
         }
     }
 
+    override def unregisterXYPlot: Unit = {
+        if (plot != null && anno != null)
+            plot.removeAnnotation(anno)
+    }
+
     override def updatePlot = {
-        anno = new XYPolygonAnnotation(verticesFlatArray,
-            new BasicStroke(1.0f), outlinePaint, fillPaint)
-        plot.addAnnotation(anno)
+        if (plot != null) {
+            if (anno != null)
+                plot.removeAnnotation(anno)
+            anno = new XYPolygonAnnotation(verticesFlatArray,
+                new BasicStroke(1.0f), outlinePaint, fillPaint)
+            plot.addAnnotation(anno)
+        }
     }
 
     override def toString = "Poly: " + vertices.mkString(" - ")
@@ -225,18 +247,32 @@ class ThickLine(p1: Point2D,
     //    }
     //}
 
-    object GeoSettings {
-        val defaultBound = Rectangular(Point2D(0.0, 0.0), Point2D(1.0, 1.0))
-        val defaultGoal = Rectangular(Point2D(0.0, 0.0), Point2D(1.0, 0.2),
-            outlinePaint = Color.blue, fillPaint = Color.green)
+object GeoSettings {
+    val defaultBound = Rectangular(Point2D(0.0, 0.0), Point2D(1.0, 1.0))
+    val defaultGoal = Rectangular(Point2D(0.0, 0.0), Point2D(1.0, 0.2),
+        outlinePaint = Color.blue, fillPaint = Color.green)
     val defaultObstacle = Rectangular(Point2D(0.2, 0.4), Point2D(0.8, 0.6),
         fillPaint = Color.black)
 
+    def getGoalsArray = goalCollection.goals
+
+    def getObstaclesArray = obstaclesCollection.obstacles
+
     object goalCollection {
-        val g1 = Rectangular(Point2D(0.0, 0.0), Point2D(0.1, 0.1), outlinePaint = Color.blue, fillPaint = Color.green)
+        val g0 = GeoSettings.defaultGoal
+        val g1 = Rectangular(Point2D(0.0, 0.0), Point2D(0.1, 0.1),
+            outlinePaint = Color.blue, fillPaint = Color.green)
+        val g2 = Rectangular(Point2D(0.9, 0.0), Point2D(1.0, 0.1),
+            outlinePaint = Color.blue, fillPaint = Color.green)
+        val g3 = Rectangular(Point2D(0.9, 0.9), Point2D(1.0, 1.0),
+            outlinePaint = Color.blue, fillPaint = Color.green)
+        val g4 = Rectangular(Point2D(0.0, 0.9), Point2D(0.1, 1.0),
+            outlinePaint = Color.blue, fillPaint = Color.green)
+        val goals = Array(g0, g1, g2, g3, g4)
     }
 
     object obstaclesCollection {
+        val o0 = GeoSettings.defaultObstacle
         val o1 = Rectangular(Point2D(0.0, 0.6), Point2D(0.4, 0.4), fillPaint = Color.black) +
          Rectangular(Point2D(0.6, 0.6), Point2D(1.0, 0.4), fillPaint = Color.black)
         val o2 = Rectangular(Point2D(0.0, 1.0), Point2D(0.4, 0.3), fillPaint = Color.black) +
@@ -251,5 +287,6 @@ class ThickLine(p1: Point2D,
                  ThickLine(Point2D(0.2, 0.7), Point2D(0.5, 0.3)) +
                  ThickLine(Point2D(0.5, 0.3), Point2D(0.65, 0.0)) +
                  Rectangular(Point2D(0.5, 0.6), Point2D(0.7, 0.9))
+        val obstacles = Array(o0, o1, o2, o3, o4, o5 ,o6)
     }
 }

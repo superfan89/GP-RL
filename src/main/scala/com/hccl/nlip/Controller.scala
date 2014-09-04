@@ -7,10 +7,12 @@ import org.jfree.data.xy.{VectorXYDataset, VectorSeriesCollection, VectorSeries}
  */
 trait Controller {
     def getPolicy: MazePolicy
+
     def observeStep(oldState: MazeState,
                     action: MazeAction,
                     reward: Double,
                     newState: MazeState,
                     newAction: MazeAction): Unit
-    def getActionVectorSeries(step: Double): VectorXYDataset
+
+    def getActionVectorSeries(step: Double, empty: Boolean): VectorXYDataset
 }

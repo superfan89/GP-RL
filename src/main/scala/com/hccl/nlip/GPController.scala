@@ -25,10 +25,18 @@ extends Controller with LazyLogging
     //Meta-parameters
     var nu: Double = 0.1
     var sigma: Double = 1
-    def gamma = if(episodeEnd) 0.9 else 0.9
+    var gammaVal = 0.9
+    def gamma = if(episodeEnd) gammaVal else gammaVal
     var succssfulEpisods: Int = 0
     var episodeEnd = false
-    def epsilon = 100.0 / (100.0 + succssfulEpisods)
+    var fixedEpsilon = 0.1
+    var useFixedEpsilon = false
+    def epsilon = {
+        if (useFixedEpsilon)
+            fixedEpsilon
+        else
+            100.0 / (100.0 + succssfulEpisods)
+    }
 
     //Kernel parameters
     val sigma_state = 0.2
@@ -45,6 +53,17 @@ extends Controller with LazyLogging
     var d: Double = 0.0
     var s: Double = Double.PositiveInfinity
 
+    def setGamma(gamma: Double): Unit = {
+        this.gammaVal = gamma
+    }
+
+    def setFixedEpsilon(epsilon: Double): Unit = {
+        this.fixedEpsilon = epsilon
+    }
+
+    def setUseFixedEpsilon(useFixedEpsilon: Boolean): Unit = {
+        this.useFixedEpsilon = useFixedEpsilon
+    }
 
     def stateKernel(s1: MazeState, s2: MazeState): Double = {
         val temp = s1.location - s2.location
@@ -52,6 +71,8 @@ extends Controller with LazyLogging
     }
 
     def stateKernel(s: MazeState): Double = stateKernel(s, s)
+
+    def getDictSize = dict.length
 
     def actionKernel(a1: MazeAction, a2: MazeAction): Double = {
         val u1 = DenseVector[Double](math.cos(a1.radiansToMove),
@@ -108,23 +129,31 @@ extends Controller with LazyLogging
         }
     }
 
-    override def getActionVectorSeries(step: Double): VectorXYDataset = {
-        val r = 60.0
-        val localVectorSeries = new VectorSeries("Predicted action")
-        var x = MazeEnvironment.xLower
-        var y = MazeEnvironment.yLower
-        while(x < MazeEnvironment.xUpper) {
-            y = MazeEnvironment.yLower
-            while(y < MazeEnvironment.yUpper) {
-                val ang = getBestAngleToMove(MazeState(Point2D(x, y)))
-                localVectorSeries.add(x, y, cos(ang)/r, sin(ang)/r)
-                y += step
-            }
-            x += step
+    override def getActionVectorSeries(step: Double,
+                                       empty: Boolean = false): VectorXYDataset = {
+        if (empty) {
+            val localVectorSeriesCollection = new VectorSeriesCollection()
+            localVectorSeriesCollection.addSeries(new VectorSeries("Predicted action"))
+            localVectorSeriesCollection
         }
-        val localVectorSeriesCollection = new VectorSeriesCollection()
-        localVectorSeriesCollection.addSeries(localVectorSeries)
-        localVectorSeriesCollection
+        else {
+            val r = 60.0
+            val localVectorSeries = new VectorSeries("Predicted action")
+            var x = MazeEnvironment.xLower
+            var y = MazeEnvironment.yLower
+            while(x < MazeEnvironment.xUpper) {
+                y = MazeEnvironment.yLower
+                while(y < MazeEnvironment.yUpper) {
+                    val ang = getBestAngleToMove(MazeState(Point2D(x, y)))
+                    localVectorSeries.add(x, y, cos(ang)/r, sin(ang)/r)
+                    y += step
+                }
+                x += step
+            }
+            val localVectorSeriesCollection = new VectorSeriesCollection()
+            localVectorSeriesCollection.addSeries(localVectorSeries)
+            localVectorSeriesCollection
+        }
     }
 
     //One SARSA step
