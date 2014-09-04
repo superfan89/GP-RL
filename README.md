@@ -7,7 +7,7 @@ In the learning environment, the agent is put into a `1.0 * 1.0` coutinuous 2D m
 
 Under the default settings the agent gets `-1.0` reward in upon every step outside the goal reagion and gets `10.0` reward when reaching the goals. After that the agent is flung randomly to start a new episode.
 
-The DEMO has a GUI which displays the agent's movement and the learnt strategy. There is also a console panel available for testing different learning parameters and change the shape of obstacles and goals.
+The DEMO has a GUI which displays the agent's movement and the learnt strategy. There is also a console panel available for testing different learning parameters and changing the obstacles and goals.
 
 Compile & Run
 =============
