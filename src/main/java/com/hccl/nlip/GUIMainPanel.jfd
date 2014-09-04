@@ -1,0 +1,422 @@
+JFDML JFormDesigner: "5.2.0.0.109" Java: "1.8.0_20" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+			"$columnSpecs": "391:1.0, center:239"
+			"$rowSpecs": "0:1.0"
+			"$hGap": 5
+			"$vGap": 5
+			"$alignLeft": true
+			"$alignTop": true
+		} ) {
+			name: "this"
+			"preferredSize": new java.awt.Dimension( 700, 500 )
+			"minimumSize": new java.awt.Dimension( 780, 580 )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+				name: "bestActionChartPanel"
+				"preferredSize": new java.awt.Dimension( 250, 250 )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+				"$columnSpecs": "right:103, 129"
+				"$rowSpecs": "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0"
+				"$hGap": 5
+				"$vGap": 5
+				"$alignLeft": true
+				"$alignTop": true
+			} ) {
+				name: "consolePanel"
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
+					"hgap": 1
+					"vgap": 1
+				} ) {
+					name: "RLCaptionPanel"
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "RLCaption"
+						"text": "RL Parameters"
+						"font": &Font0 new java.awt.Font( "宋体", 0, 16 )
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridwidth": 2
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "discountLabel"
+					"text": "Discount:"
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 1
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
+					"hgap": 2
+					"vgap": 2
+				} ) {
+					name: "discountPanel"
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "discountDec"
+						"text": "-"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "discountDecActionPerformed", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "discountField"
+						"text": "000.00"
+						"columns": 6
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "discountInc"
+						"text": "+"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "discountIncActionPerformed", true ) )
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"gridy": 1
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "rewardCollisionLabel"
+					"text": "Reward collision:"
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 2
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
+					"hgap": 2
+					"vgap": 2
+				} ) {
+					name: "rewardCollisionPanel"
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "rewardCollisionDec"
+						"text": "-"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "rewardCollisionDecActionPerformed", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "rewardCollisionField"
+						"text": "000.00"
+						"columns": 6
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "rewardCollisionInc"
+						"text": "+"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "rewardCollisionIncActionPerformed", true ) )
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"gridy": 2
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "rewadGoalLabel"
+					"text": "Reward goal:"
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 3
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
+					"hgap": 2
+					"vgap": 2
+				} ) {
+					name: "rewardGoalPanel"
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "rewardGoalDec"
+						"text": "-"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "rewardGoalDecActionPerformed", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "rewardGoalField"
+						"text": "000.00"
+						"columns": 6
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "rewardGoalInc"
+						"text": "+"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "rewardGoalIncActionPerformed", true ) )
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"gridy": 3
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "rewardOneStepLabel"
+					"text": "Reward one step:"
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 4
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
+					"hgap": 2
+					"vgap": 2
+				} ) {
+					name: "rewardOneStepPanel"
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "rewardOneStepDec"
+						"text": "-"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "rewardOneStepDecActionPerformed", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "rewardOneStepField"
+						"text": "000.00"
+						"columns": 6
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "rewardOneStepInc"
+						"text": "+"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "rewardOneStepIncActionPerformed", true ) )
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"gridy": 4
+				} )
+				add( new FormComponent( "javax.swing.JCheckBox" ) {
+					name: "fixedEpsilonCheckBox"
+					"text": "Fixed Epsilon:"
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "fixedEpsilonCheckBoxActionPerformed", true ) )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 5
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
+					"hgap": 2
+					"vgap": 2
+				} ) {
+					name: "fixedEpsilonPanel"
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "fixedEpsilonField"
+						"text": "00.10"
+						"columns": 6
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"gridy": 5
+					"hAlign": 2
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
+					"hgap": 0
+					"vgap": 0
+				} ) {
+					name: "sepPanel1"
+					add( new FormComponent( "javax.swing.JSeparator" ) {
+						name: "separator1"
+						"preferredSize": &Dimension0 new java.awt.Dimension( 210, 2 )
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 6
+					"gridwidth": 2
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
+					"hgap": 1
+					"vgap": 1
+				} ) {
+					name: "envCaptionPanel"
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "envLabel"
+						"text": "Environment"
+						"font": #Font0
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 7
+					"gridwidth": 2
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "obstaclesLabel"
+					"text": "Obstacles:"
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 8
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) ) {
+					name: "obstaclesPanel"
+					add( new FormComponent( "javax.swing.JComboBox" ) {
+						name: "obstaclesComboBox"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "obstaclesComboBoxActionPerformed", true ) )
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"gridy": 8
+					"hAlign": 2
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "goalsLabel"
+					"text": "Goals:"
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 9
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) ) {
+					name: "goalsPanel"
+					add( new FormComponent( "javax.swing.JComboBox" ) {
+						name: "goalsComboBox"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "goalsComboBoxActionPerformed", true ) )
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"gridy": 9
+					"hAlign": 2
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
+					"hgap": 0
+					"vgap": 0
+				} ) {
+					name: "sepPanel2"
+					add( new FormComponent( "javax.swing.JSeparator" ) {
+						name: "separator2"
+						"preferredSize": #Dimension0
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 10
+					"gridwidth": 2
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
+					"hgap": 1
+					"vgap": 1
+				} ) {
+					name: "controlCaptionPanel"
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "controlLabel"
+						"text": "Control"
+						"font": #Font0
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 11
+					"gridwidth": 2
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
+					"hgap": 0
+					"vgap": 0
+				} ) {
+					name: "displayActionsPanel"
+					add( new FormComponent( "javax.swing.JCheckBox" ) {
+						name: "displayActionsCheckBox"
+						"text": "Display action vectors"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "displayActionsCheckBoxActionPerformed", true ) )
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 12
+					"gridwidth": 2
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
+					"hgap": 2
+					"vgap": 0
+				} ) {
+					name: "controlActionsPanel"
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "stepBtn"
+						"text": "1 Step"
+						"margin": new java.awt.Insets( 2, 2, 2, 2 )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "stepBtnActionPerformed", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "episodeBtn"
+						"text": "1 Episode"
+						"margin": new java.awt.Insets( 2, 4, 2, 4 )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "episodeBtnActionPerformed", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "animateBtn"
+						"text": "Animate"
+						"margin": new java.awt.Insets( 2, 2, 2, 2 )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "animateBtnActionPerformed", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "resetBtn"
+						"text": "Reset"
+						"margin": new java.awt.Insets( 2, 2, 2, 2 )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "resetBtnActionPerformed", true ) )
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 13
+					"gridwidth": 2
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
+					"hgap": 2
+					"vgap": 0
+				} ) {
+					name: "controlEpisodesPanel"
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "performEpisodesBtn"
+						"text": "Perform"
+						"margin": new java.awt.Insets( 2, 2, 2, 2 )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "performEpisodesBtnActionPerformed", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "numberEpisodesField"
+						"text": "100"
+						"columns": 5
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "numberEpisodesLabel"
+						"text": "episodes"
+					} )
+					add( new FormComponent( "javax.swing.JProgressBar" ) {
+						name: "episodesProgressBar"
+						"minimumSize": new java.awt.Dimension( 5, 10 )
+						"preferredSize": new java.awt.Dimension( 80, 20 )
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 14
+					"gridwidth": 2
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
+					"hgap": 0
+					"vgap": 0
+				} ) {
+					name: "sepPanel3"
+					add( new FormComponent( "javax.swing.JSeparator" ) {
+						name: "separator3"
+						"preferredSize": #Dimension0
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 15
+					"gridwidth": 2
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "totalStepsLabel"
+					"text": "Total steps:"
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 16
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "totalStepsField"
+					"text": "0000000"
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"gridy": 16
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "totalEpisodesLabel"
+					"text": "Total episodes:"
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 17
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "totalEpisodesFields"
+					"text": "0000000"
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 17
+					"gridx": 1
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "totalRewardLabel"
+					"text": "Total reward:"
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 18
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "totalRewardField"
+					"text": "00000000.00000000"
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"gridy": 18
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "dicSizeField"
+					"text": "00000000.00000000"
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 19
+					"gridx": 1
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "dicSizeLabel"
+					"text": "Dictionary size:"
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 19
+				} )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 1
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 20, 15 )
+			"size": new java.awt.Dimension( 735, 520 )
+		} )
+	}
+}
