@@ -20,6 +20,11 @@ libraryDependencies  ++= Seq(
     "org.scalatest" %% "scalatest" % "2.2.1" % "test"
 )
 
-mainClass := Some("com.hccl.nlip.Main")
+// Turn this on in cross-jvm-compilation
+//javacOptions ++= Seq("-source", "1.7", "-target", "1.7", "-bootclasspath", "C:\\Program Files (x86)\\Java\\jre7\\lib\\rt.jar")
 
-mainClass in assembly := Some("com.hccl.nlip.Main")
+mainClass := Some("com.hccl.nlip.GUIStandalone")
+
+mainClass in (Compile, run) := Some("com.hccl.nlip.GUIStandalone")
+
+mainClass in assembly := Some("com.hccl.nlip.GUIStandalone")
