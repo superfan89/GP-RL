@@ -14,7 +14,7 @@ Compile & Run
 
 The main RL algorithm is written in Scala and the GUI part in Java, and thus a JVM is needed for running the program. [SBT](http://www.scala-sbt.org/) needs to be installed for handling dependencis and compilation.
 
-Use sbt `sbt compile ` to download the dependencies and compile the project and use `sbt run` to start the main GUI.
+Use `sbt compile ` to download the dependencies and compile the project and use `sbt run` to start the main GUI.
 
 Note
 ====
