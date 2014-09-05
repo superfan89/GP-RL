@@ -3,9 +3,9 @@ GP-RL
 
 GP-RL is a simple DEMO of the GPSARSA reinforcement learning algorithm described in ''Reinforcement learning with Gaussian processes'' by Yaakov Engel.
 
-In the learning environment, the agent is put into a `1.0 * 1.0` coutinuous 2D maze and keeps roaming by 0.1 per step until it reaches the goal. Upon every step the agent can choose any direction in `[0, 2*PI]`, and the actual direction  is the chosen direction plus a random noise in `[0, PI/6]`.
+In the learning environment, the agent is put into a `1.0 * 1.0` coutinuous 2D maze and keeps roaming by `0.1` per step until it reaches the goal. Upon every step the agent can choose any direction in `[0, 2*PI]`, and the actual direction  is the chosen direction plus a random noise in `[0, PI/6]`.
 
-Under the default settings the agent gets `-1.0` reward in upon every step outside the goal reagion and gets `10.0` reward when reaching the goals. After that the agent is flung randomly to start a new episode.
+Under the default settings the agent gets `-1.0` reward upon every step outside the goal reagion and gets `10.0` reward when reaching the goals. After that the agent is flung randomly to start a new episode.
 
 The DEMO has a GUI which displays the agent's movement and the learnt strategy. There is also a console panel available for testing different learning parameters and changing the obstacles and goals.
 
